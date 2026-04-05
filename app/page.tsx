@@ -23,7 +23,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={`min-h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden ${orbitron.className}`}>
+    <main className={`min-h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden ${orbitron.className}`}>
       
       {/* TRON Infinite Perspective Grid Floor (dengan efek 3D ikuti kursor) */}
       <div className="absolute inset-0 z-0 pointer-events-none opacity-40 flex items-end justify-center overflow-hidden">
@@ -114,6 +114,6 @@ export default function Home() {
           INITIALIZE
         </Link>
       </div>
-    </div>
+    </main>
   );
 }

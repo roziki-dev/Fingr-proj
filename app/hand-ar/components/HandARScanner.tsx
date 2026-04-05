@@ -11,7 +11,7 @@ export default function HandARScanner() {
   const { videoRef, canvasRef, containerRef, infoRef, isReady } = useHandTracking();
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-black z-50" ref={containerRef}>
+    <main className="fixed inset-0 w-screen h-screen overflow-hidden bg-black z-50" ref={containerRef}>
       {!isReady && <p className="absolute z-10 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">Loading AI Model...</p>}
 
       <video
@@ -38,6 +38,6 @@ export default function HandARScanner() {
 
       {/* Extracted Floating UI Component */}
       <FloatingInfo infoRef={infoRef} isReady={isReady} />
-    </div>
+    </main>
   );
 }
