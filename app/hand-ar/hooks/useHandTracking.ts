@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { HandLandmarker } from "@mediapipe/tasks-vision";
+import { FilesetResolver, HandLandmarker, DrawingUtils, HandLandmarkerResult } from "@mediapipe/tasks-vision";
 import { Fish, BlackHole } from "../types";
 import { checkGestures } from "../utils/gestures";
 import { updateFishes, updateBlackHole } from "../utils/physics";
@@ -20,20 +20,14 @@ export function useHandTracking() {
     const videoNode = videoRef.current;
     let isMounted = true;
     let handLandmarker: HandLandmarker;
-    let DrawingUtilsClass: typeof import("@mediapipe/tasks-vision").DrawingUtils;
-    let HandLandmarkerClass: typeof import("@mediapipe/tasks-vision").HandLandmarker;
     let animationFrameId: number;
 
     const initializeMediaPipe = async () => {
-      const visionModule = await import("@mediapipe/tasks-vision");
-      DrawingUtilsClass = visionModule.DrawingUtils;
-      HandLandmarkerClass = visionModule.HandLandmarker;
-      
-      const vision = await visionModule.FilesetResolver.forVisionTasks(
+      const vision = await FilesetResolver.forVisionTasks(
         "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
       );
 
-      handLandmarker = await HandLandmarkerClass.createFromOptions(vision, {
+      handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath: `https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task`,
           delegate: "GPU"
@@ -69,7 +63,7 @@ export function useHandTracking() {
       const canvas = canvasRef.current;
 
       const startTimeMs = performance.now();
-      let results: import("@mediapipe/tasks-vision").HandLandmarkerResult | null = null;
+      let results: HandLandmarkerResult | null = null;
 
       try {
         results = handLandmarker.detectForVideo(video, startTimeMs);
@@ -92,9 +86,9 @@ export function useHandTracking() {
         const now = Date.now();
 
         if (results.landmarks && results.landmarks.length > 0) {
-          const drawingUtils = new DrawingUtilsClass(canvasCtx);
+          const drawingUtils = new DrawingUtils(canvasCtx);
           for (const landmarks of results.landmarks) {
-            drawingUtils.drawConnectors(landmarks, HandLandmarkerClass.HAND_CONNECTIONS, { color: "#00FF00", lineWidth: 5 });
+            drawingUtils.drawConnectors(landmarks, HandLandmarker.HAND_CONNECTIONS, { color: "#00FF00", lineWidth: 5 });
             drawingUtils.drawLandmarks(landmarks, { color: "#FF0000", lineWidth: 2 });
             if (landmarks && landmarks.length > 9) {
               handCenters.push({
