@@ -1,29 +1,25 @@
 "use client";
 
-import { FloatingInfo } from "./components/FloatingInfo";
-import { useHandTracking } from "./hooks/useHandTracking";
+import dynamic from "next/dynamic";
+import { Orbitron } from "next/font/google";
 
-export default function HandTracker() {
-  const { videoRef, canvasRef, containerRef, infoRef, isReady } = useHandTracking();
+const orbitron = Orbitron({ subsets: ["latin"], weight: ["400", "700", "900"] });
 
-  return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-black z-50" ref={containerRef}>
-      {!isReady && <p className="absolute z-10 text-white left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">Loading AI Model...</p>}
 
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        className="w-full h-full object-cover -scale-x-100"
-      ></video>
-
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full object-cover z-[4] pointer-events-none -scale-x-100"
-      ></canvas>
-
-      {/* Extracted Floating UI Component */}
-      <FloatingInfo infoRef={infoRef} isReady={isReady} />
+const HandARScanner = dynamic(() => import("./components/HandARScanner"), {
+  ssr: false, // Sangat vital: mencegah error "navigator/window is not defined" di server Next.js
+  loading: () => (
+    <div className={`fixed inset-0 w-screen h-screen bg-black flex flex-col items-center justify-center z-50 ${orbitron.className}`}>
+      <div className="w-[60vw] max-w-sm h-1.5 bg-[#00f3ff]/20 rounded-full overflow-hidden mb-6">
+        <div className="h-full bg-[#00f3ff] animate-pulse w-1/3 rounded-full shadow-[0_0_10px_#00f3ff]"></div>
+      </div>
+      <div className="text-[#00f3ff] text-xl md:text-2xl font-black uppercase tracking-widest animate-pulse [text-shadow:0_0_10px_#00f3ff,0_0_20px_#00f3ff]">
+        Initializing Cybernetics...
+      </div>
     </div>
-  );
+  ),
+});
+
+export default function HandARPage() {
+  return <HandARScanner />;
 }
